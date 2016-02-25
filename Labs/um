@@ -1,0 +1,197 @@
+"""CS 210, Introduction to Programming, Fall 2015, _YOUR_NAME_HERE_.
+
+Instructor: Dr. Bower / Col Gibson / LtCol Harder / LtCol (Ret) Christman
+
+Documentation: _YOUR_DETAILED_DOCUMENTATION_STATEMENT_HERE_.
+"""
+
+import easygui
+import random
+import turtle
+
+# Define several useful constants to be used by the Turtle graphics.
+WIDTH = 960  # Usually 720, 960, 1024, 1280, 1600, or 1920.
+HEIGHT = WIDTH * 9 / 16  # Produces the eye-pleasing 16:9 HD aspect ratio.
+MARGIN = 32  # Somewhat arbitrary value, but it looks nice.
+FONT_SIZE = 16  # Somewhat arbitrary value, but it looks nice.
+DRAW_FAST = False  # Set to True for fast, stealthy turtles.
+DICE_SIZE = (WIDTH - MARGIN * 9) / 8
+START_X = WIDTH / 2 - MARGIN
+START_Y = HEIGHT / 2 - MARGIN
+SPACE2 = DICE_SIZE + MARGIN
+ROLL = random.randint(1, 7)
+HOW_MANY_COLUMN = (WIDTH - MARGIN) / SPACE2
+HOW_MANY_ROWS = (HEIGHT - MARGIN) / SPACE2
+
+
+def main():
+    """Main program to _INSERT_BRIEF_DESCRIPTION_HERE_."""
+    # Create the turtle screen and two turtles (leave this as the first line of main).
+    screen, artist, writer = turtle_setup()
+
+    # TODO: Implement your main program here.
+    # player1 = easygui.enterbox( "Player 1's name?" )
+    # player2 = easygui.enterbox( "Player 2's name?" )
+
+    roll_check = 0
+    p1_score = 0
+    p2_score = 0
+
+    begin = easygui.boolbox("Do you want to play some pig?", "Choose:", ["YES", "NO WAY"])
+
+    if begin:
+        player1 = easygui.enterbox("Player 1's name?")
+        player2 = easygui.enterbox("Player 2's name?")
+        begin_player = easygui.boolbox("Who's starting?", "Choose:", [player1, player2])
+        p1_score = 0
+        p2_score = 0
+        if begin_player:
+            ready_check = easygui.boolbox("Ready " + player1 + "?", "Choose", ["YES", "WHOOPS"])
+            if ready_check:
+                while p1_score < 100 and p2_score < 100:
+                    roll_die(writer, player1, player2, p1_score, p2_score)
+                    # roll_die(writer, player2, p2_score)
+                if p1_score == 100:
+                    easygui.msgbox(player1 + " WON!")
+                else:
+                    easygui.msgbox(player2 + " WON!")
+    # Wait for the user to click before closing the window (leave this as the last line of main).
+    screen.exitonclick()
+
+
+# TODO: Implement your roll_die function here.
+
+
+def roll_die(turtle, player1, player2, player_score1, player_score2):
+    screen, artist, writer = turtle_setup()
+    shoot = 1
+    turtle.setposition(0, HEIGHT // 2 - FONT_SIZE * 2)
+    score1 = 0
+    score2 = 0
+    pos_count = 0
+    while shoot == 1:
+        roll = random.randint(1, 6)
+        choice = easygui.boolbox("Roll or Hold?", "Choose:", ["ROLL", "HOLD"])
+        writer.reset()
+        turtle.setpos(WIDTH / 2 - DICE_SIZE, HEIGHT // 2 - FONT_SIZE * 2)
+        if choice:
+            if roll == 1:
+                easygui.msgbox(str(player1) + ", busted. Next Player.")
+                score1 = 0
+                shoot = 0
+                artist.reset()
+                turtle.setposition(0, HEIGHT // 2 - FONT_SIZE * 2)
+            else:
+                draw_die(artist, roll, START_X, START_Y, pos_count)
+                score1 += roll
+                pos_count += 1
+                turtle.write(str(player2) + ": " + str(score1), align="Center", font=("Arial", FONT_SIZE, "bold"))
+    while shoot == 0:
+        roll2 = random.randint(1, 6)
+        choice = easygui.boolbox("Roll or Hold?", "Choose:", ["ROLL", "HOLD"])
+        turtle.setpos(WIDTH / 2 + DICE_SIZE, HEIGHT // 2 - FONT_SIZE * 2)
+        if choice:
+            if roll2 == 1:
+                easygui.msgbox(str(player2) + ", busted. Next Player.")
+                score2 = 0
+                shoot = 1
+                artist.reset()
+                turtle.setposition(0, HEIGHT // 2 - FONT_SIZE * 2)
+            else:
+                draw_die(artist, roll2, START_X, START_Y, pos_count)
+                score2 += roll2
+                pos_count += 1
+                turtle.write(str(player1) + ": " + str(score2), align="Center", font=("Arial", FONT_SIZE, "bold"))
+
+# TODO: Implement your draw_die function here.
+
+
+def draw_die(turtle, number_of_pips, x, y, pos_mod):
+    turtle.penup()
+    x_pos = x - (SPACE2 * pos_mod)
+    y_pos = y
+    if pos_mod > HOW_MANY_COLUMN:
+        y_pos = START_Y - (SPACE2 * pos_mod)
+        x_pos = START_X
+    turtle.setpos(x_pos, y_pos)
+    turtle.fillcolor("Red")
+    turtle.begin_fill()
+    turtle.pendown()
+    for side in range(0, 4):
+        turtle.right(90)
+        turtle.forward(DICE_SIZE)
+    turtle.end_fill()
+    turtle.penup()
+    if number_of_pips % 2 != 0:
+        turtle.setpos(x_pos - DICE_SIZE / 2, y_pos - DICE_SIZE / 2)
+        turtle.dot(DICE_SIZE / 5)
+    if number_of_pips > 1:
+        turtle.setpos(x_pos - DICE_SIZE * (7 / 8), y_pos - DICE_SIZE * (1 / 8))
+        turtle.dot(DICE_SIZE / 5)
+        turtle.setpos(x_pos - DICE_SIZE * (1 / 8), y_pos - DICE_SIZE * (7 / 8))
+        turtle.dot(DICE_SIZE / 5)
+    if number_of_pips > 3:
+        turtle.setpos(x_pos - DICE_SIZE * (1 / 8), y_pos - DICE_SIZE * (1 / 8))
+        turtle.dot(DICE_SIZE / 5)
+        turtle.setpos(x_pos - DICE_SIZE * (7 / 8), y_pos - DICE_SIZE * (7 / 8))
+        turtle.dot(DICE_SIZE / 5)
+    if number_of_pips == 6:
+        turtle.setpos(x_pos - DICE_SIZE * (1 / 8), y_pos - DICE_SIZE / 2)
+        turtle.dot(DICE_SIZE / 5)
+        turtle.setpos(x_pos - DICE_SIZE * (7 / 8), y_pos - DICE_SIZE / 2)
+        turtle.dot(DICE_SIZE / 5)
+
+        # elif number_of_pips > 3:
+        #     turtle.backward((2 * DICE_SIZE ** 2) ** .5)
+
+
+def turtle_setup():
+    """Setup the turtle environment with a screen and two turtles, one for drawing and one for writing.
+
+    Using separate turtles for drawing and writing makes it easy to clear one or the other by
+    doing artist.clear() or writer.clear() to clear only the drawing or writing, respectively.
+
+    :return: The screen, a drawing turtle, and a writing turtle.
+    :rtype: (turtle.Screen, turtle.Turtle, turtle.Turtle)
+    """
+    #  ___   ___     _  _  ___ _____    __  __  ___  ___ ___ _____   __
+    # |   \ / _ \   | \| |/ _ \_   _|  |  \/  |/ _ \|   \_ _| __\ \ / /
+    # | |) | (_) |  | .` | (_) || |    | |\/| | (_) | |) | || _| \ V /
+    # |___/ \___/   |_|\_|\___/ |_|    |_|  |_|\___/|___/___|_|   |_|
+    #  _____ _  _ ___ ___    ___ _   _ _  _  ___ _____ ___ ___  _  _
+    # |_   _| || |_ _/ __|  | __| | | | \| |/ __|_   _|_ _/ _ \| \| |
+    #   | | | __ || |\__ \  | _|| |_| | .` | (__  | |  | | (_) | .` |
+    #   |_| |_||_|___|___/  |_|  \___/|_|\_|\___| |_| |___\___/|_|\_|
+    #
+    # Create the turtle graphics screen and set a few basic properties.
+    screen = turtle.Screen()
+    screen.setup(WIDTH, HEIGHT, MARGIN, MARGIN)
+    screen.bgcolor("Green")
+
+    # Create two turtles, one for drawing and one for writing.
+    artist = turtle.Turtle()
+    writer = turtle.Turtle()
+
+    # Change the artist turtle's shape so the artist and writer are distinguishable.
+    artist.shape("turtle")
+
+    # Make the animation as fast as possible and hide the turtles.
+    if DRAW_FAST:
+        screen.delay(0)
+        artist.hideturtle()
+        artist.speed("fastest")
+        writer.hideturtle()
+        writer.speed("fastest")
+
+    # Set a few properties of the writing turtle useful since it will only be writing.
+    writer.setheading(90)  # Straight up, which makes it look sort of like a cursor.
+    writer.penup()  # A turtle's pen does not have to be down to write text.
+    writer.setposition(0, HEIGHT // 2 - FONT_SIZE * 2)  # Centered at top of the screen.
+
+    return screen, artist, writer
+
+
+# The following two lines are always the last lines in a source file and they
+# start the execution of the program; everything above was just definitions.
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,41 @@
+import exifread
+import easygui
+import math
+
+def main():
+
+    file = easygui.fileopenbox(default="./data/")
+    get_exif(file)
+# # Open image file for reading (binary mode)
+# f = open(filename, 'rb')
+# # Return Exif tags
+# tags = exifread.process_file(f)
+
+# for tag in tags.keys():
+#     if tag not in ('JPEGThumbnail', 'TIFFThumbnail', 'Filename', 'EXIF MakerNote'):
+#         print("Key: %s, value %s" % (tag, tags[tag]))
+
+
+def get_exif(picture):
+    image = open(picture, 'rb')
+    tags = exifread.process_file(image)
+    gps_lat = []
+    gps_long = []
+    lat_need = ('GPS GPSLatitudeRef', 'GPS GPSLatitude')
+    long_need = ('GPS GPSLongitude', 'GPS GPSLongitudeRef')
+
+    for tag in tags.keys():
+        if tag in lat_need:
+            gps_lat.append("%s" % (tags[tag]))
+    for tag in tags.keys():
+        if tag in long_need:
+            gps_long.append("%s" % (tags[tag]))
+    print(gps_lat)
+    print(gps_long)
+
+def longlat_to_degrees(latitude, longitude):
+    
+
+
+if __name__ == "__main__":
+    main()
