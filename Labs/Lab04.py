@@ -39,7 +39,7 @@ def get_exif(picture):
     what_i_need = ('GPS GPSLatitude', 'GPS GPSLatitudeRef', 'GPS GPSLongitude', 'GPS GPSLongitudeRef')
     for tag in what_i_need:
         try:
-            val = "%s" % tags[tag]
+            val = "%s" % tags[tag]sssssss
             if isinstance(val, list):
                 gps_out.extend(map(str, float(val)))
             else:
